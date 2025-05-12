@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/eval_overall.py",
-            "args": ["--path", "${workspaceFolder}/predictions/totalcov_gemini-2.0-flashformat.jsonl"],
+            "args": ["--path", "${workspaceFolder}/predictions/totalcov_gpt-4o-miniformat.jsonl"],
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
