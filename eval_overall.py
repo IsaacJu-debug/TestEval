@@ -413,17 +413,44 @@ def check_correctness(generated_data, args, ks=[1, 2, 5]):
     print(f'Assertion Correctness: {assertion_correct}')
     print(f'Executable Correctness: {exec_correct}')
 
+    # Write results to results/correctness_results.jsonl in JSONL format
+    os.makedirs('results', exist_ok=True)
+    results = {
+        "Syntax Correctness": syn_correct,
+        "Assertion Correctness": assertion_correct,
+        "Executable Correctness": exec_correct
+    }
+    with open('results/correctness_results.jsonl', 'w') as f:
+        f.write(json.dumps(results) + '\n')
+
     #compute average coverage@k
+    coverage_results = {}
     for k in ks:
         line_covs_at_k[f'cov@{k}']=sum(line_covs_at_k[f'cov@{k}'])/len(generated_data)
         branch_covs_at_k[f'cov@{k}']=sum(branch_covs_at_k[f'cov@{k}'])/len(generated_data)
         print(f'line coverage@{k}',line_covs_at_k[f'cov@{k}'])
         print(f'branch coverage@{k}',branch_covs_at_k[f'cov@{k}'])
+        coverage_results[f'line_coverage@{k}'] = line_covs_at_k[f'cov@{k}']
+        coverage_results[f'branch_coverage@{k}'] = branch_covs_at_k[f'cov@{k}']
+
+    
 
     #compute coverage
     avg_line_cov=total_line_cov/len(generated_data)
     avg_branch_cov=total_branch_cov/len(generated_data)
     print(f'Average Line Coverage: {avg_line_cov}, Average Branch Coverage: {avg_branch_cov}')
+    coverage_results['avg_line_cov'] = avg_line_cov
+    coverage_results['avg_branch_cov'] = avg_branch_cov
+
+    # Write coverage@k results to results/coverage@k_results.jsonl in JSONL format
+    with open('results/coverage@k_results.jsonl', 'w') as f:
+        f.write(json.dumps(coverage_results) + '\n')
+
+    # Write execution failures to results/execution_fails.jsonl in JSONL format
+    with open('results/execution_fails.jsonl', 'w') as f:
+        for fail in exec_fails:
+            f.write(json.dumps(fail) + '\n')
+
     return {'syn_correct':syn_correct,'exec_correct':exec_correct}, exec_fails
 
 
